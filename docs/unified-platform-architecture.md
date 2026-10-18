@@ -1,10 +1,8 @@
-# Unified Replica Platform
+# Reverse Everything Architecture
 
-This document defines the rewrite target for the repository. The goal is one
-platform with one domain model, one authorization boundary, one evidence
-format, and one execution protocol. The old Workbench, REA, reverse-skill,
-and PentAGI projects are source references and capability inputs; they are not
-peer runtimes selected by a router.
+This document defines the platform architecture. Reverse Everything uses one
+domain model, one authorization boundary, one evidence format, and one
+execution protocol across its analysis and verification capabilities.
 
 ## Core model
 

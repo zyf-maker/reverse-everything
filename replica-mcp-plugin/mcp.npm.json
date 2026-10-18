@@ -3,7 +3,7 @@
     "replica-unified": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "replica-unified-mcp"]
+      "args": ["-y", "https://github.com/zyf-maker/reverse-everything/releases/download/v0.2.1/replica-unified-mcp-0.2.1.tgz"]
     }
   }
 }

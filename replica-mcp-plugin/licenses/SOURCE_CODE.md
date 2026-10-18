@@ -6,7 +6,7 @@ All component copyright and license terms are preserved in
 `chromium-THIRD-PARTY-NOTICES.html` and `.txt` (770 generated entries).
 
 The following source companions are provided alongside the binary ZIP at
-https://github.com/zyf-maker/reverse-replica/releases/tag/v0.1.1 :
+https://github.com/zyf-maker/reverse-everything/releases/tag/v0.2.1 :
 
 - `chromium-155.0.8059.79-lite.tar.xz`: Chromium upstream's matching source
   distribution, including third-party sources and platform build configurations.

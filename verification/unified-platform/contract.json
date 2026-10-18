@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://zyf-maker.github.io/reverse-replica/schemas/replica-unified-v1.json",
+  "$id": "https://zyf-maker.github.io/reverse-everything/schemas/replica-unified-v1.json",
   "title": "Replica Unified Platform Contract",
   "description": "The durable records shared by static, runtime, rebuild, replay, and security phases.",
   "type": "object",

@@ -44,13 +44,13 @@ development can point at another checkout with `REPLICA_CORE_ROOT`.
 
 ## Register with a host
 
-The npm distribution is the lightweight cross-platform path. It requires
-Node.js 20+ and downloads the JavaScript MCP dependencies through npm; Python
-and Chromium are optional for capabilities that need them.
+The npx distribution is the lightweight cross-platform path. It requires
+Node.js 20+. The current public package is distributed from the GitHub release
+tarball; Python and Chromium are optional for capabilities that need them.
 
 ```powershell
-npx -y replica-unified-mcp
-codex mcp add replica-unified -- npx -y replica-unified-mcp
+npx -y https://github.com/zyf-maker/reverse-everything/releases/download/v0.2.1/replica-unified-mcp-0.2.1.tgz
+codex mcp add replica-unified -- npx -y https://github.com/zyf-maker/reverse-everything/releases/download/v0.2.1/replica-unified-mcp-0.2.1.tgz
 ```
 
 The repository includes `mcp.npm.json` for hosts that accept a portable npm

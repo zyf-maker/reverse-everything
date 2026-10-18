@@ -207,7 +207,7 @@ def main():
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        print("reverse-replica:", result["verdict"])
+        print("reverse-everything:", result["verdict"])
         for item in result["findings"]:
             print(f'[{item["Status"]}] {item["Id"]}: {item["Detail"]}')
         print("Capabilities:", json.dumps(result["capabilities"]))

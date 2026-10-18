@@ -25,6 +25,6 @@ foreach ($target in $targets) {
   } else {
     & $commands[$target] mcp add --scope user --transport stdio replica-unified -- $node $server
   }
-  if ($LASTEXITCODE -ne 0) { throw "Registering Replica Workbench with $target failed with exit code $LASTEXITCODE" }
+  if ($LASTEXITCODE -ne 0) { throw "Registering Reverse Everything with $target failed with exit code $LASTEXITCODE" }
 }
-Write-Host "Registered Replica Workbench with: $($targets -join ', '). Restart the host and check its MCP server list."
+Write-Host "Registered Reverse Everything with: $($targets -join ', '). Restart the host and check its MCP server list."

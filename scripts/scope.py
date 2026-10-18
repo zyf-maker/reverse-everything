@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a local reverse-replica authorization scope before a target action."""
+"""Validate a local Reverse Everything authorization scope before a target action."""
 import argparse
 import datetime as dt
 import ipaddress

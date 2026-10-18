@@ -33,5 +33,5 @@ if (Object.values(checks).every(Boolean)) {
   catch (error) { agent = { ok: false, error: { type: error.name, message: error.message } }; }
 }
 const ready = Object.values(checks).every(Boolean) && agent?.ok === true;
-console.log(JSON.stringify({ plugin: 'replica-workbench', root, ready, checks, workbench: agent }, null, 2));
+console.log(JSON.stringify({ plugin: 'replica-unified', root, ready, checks, workbench: agent }, null, 2));
 process.exitCode = ready ? 0 : 1;

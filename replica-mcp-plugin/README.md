@@ -1,15 +1,14 @@
 # Replica MCP Plugin
 
-This package exposes the unified Replica platform over local MCP stdio. The
-MCP surface is a single object model for reverse understanding, evidence,
-behavior reconstruction, and verification. It is not a collection of
-provider-specific tools.
+This package exposes Replica as a local MCP server for evidence-driven
+reverse engineering, behavior reconstruction, and independent verification.
+It provides one consistent case model, authorization boundary, evidence graph,
+execution runtime, and reporting workflow.
 
-The canonical protocol is `replica-unified/v1`. A bundled `core/` directory is
-loaded as the in-process execution kernel, so case state, authorization,
-evidence links, runs and reports share one lifecycle. A package without the
-bundled core may use the Workbench bridge only as an explicit migration
-compatibility mode; that mode is not the unified release profile.
+The protocol is `replica-unified/v1`. The package includes the execution core,
+MCP server, browser runtime integration, verification pipeline, and release
+metadata in one distribution. Case state, authorization, evidence links, runs,
+and reports share one lifecycle.
 
 ## Canonical MCP tools
 
@@ -83,7 +82,6 @@ npm test
 node server/doctor.mjs
 ```
 
-The release builder copies `replica-core/` into the package as `core/` when
-that source directory exists, along with the MCP server and compatibility
-runtime. Browser notices are generated from the exact bundled Chromium binary;
-the build refuses to produce a package when those notices are incomplete.
+The release builder validates the bundled runtime and generates the Chromium
+third-party notices from the exact binary included in the release. A release
+is rejected when the notice set is incomplete.

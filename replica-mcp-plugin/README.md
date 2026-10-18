@@ -2,6 +2,26 @@
 
 Replica Workbench is exposed as a local Model Context Protocol (MCP) server for Codex, Claude Code, and other MCP-capable agent hosts.
 
+## Connection paths
+
+There are **two general registration paths and one host-dependent plugin path**. All launch the same local stdio MCP server and expose the same 11 tools; they are alternative ways to register one server.
+
+| Path | Entry | Availability |
+| --- | --- | --- |
+| CLI registration | `install-host.ps1 -Agent codex` / `-Agent claude`, or the equivalent host CLI command below | Helper scripts for these two hosts are included. The helper and direct command count as one path. |
+| Manual stdio configuration | Configure an absolute Node executable path and absolute `server/index.mjs` argument in the host's MCP settings; use `mcp.json` as the package template | For DSH or another host that supports local stdio. Adapt to the host's configuration schema and replace placeholders when it does not expand them. |
+| Host plugin installation | Load the extracted directory through a host's supported plugin installer using the supplied manifests | Conditional on the host accepting the manifest and resolving its root placeholder. Installation through every host UI has not been verified. |
+
+Codex, Claude Code, and generic stdio hosts (including DSH) are three **host categories**, not three different transports. The implementation currently has **one MCP transport: stdio**. The release ZIP and development checkout are two **runtime modes**; `mcp.dev.json` uses the development Node/Workbench instead of the bundled runtime. Select one registration for a given host to keep its server identity and Workbench directory consistent.
+
+The verified release checks cover package startup, a real stdio MCP handshake and tool calls, and bundled browser/CDP behavior. They do not establish that every host's installer or UI has been exercised.
+
+## Cooperation with the Reverse Replica skill
+
+`reverse-replica` is the reasoning/workflow skill; `replica-workbench` is the execution service. The repository keeps them together so the skill can use the service for case management, evidence, replay and verification while retaining its behavioral reconstruction and acceptance rules. The skill also retains REA/PentAGI branches for work beyond the Workbench backend.
+
+Install/load the skill and register the MCP service separately. The v0.1.1 binary ZIP does not install `SKILL.md` into a host. The current repository skill contains an explicit Workbench route; update an older installed copy to use it. See [the cooperation rules](../references/workbench-mcp.md). Their two case/scope formats remain distinct and authorization is checked by the corresponding backend.
+
 ## Which package should users download?
 
 The tested release is `replica-workbench-mcp-win-x64-v0.1.1.zip` for Windows x64. It contains the MCP server, Node.js, Python, unbranded Chromium, npm dependencies, Workbench, static analyzer, CDP runtime, host manifests, provenance, and bundled runtime license files. Check the adjacent `.sha256` file before extracting.

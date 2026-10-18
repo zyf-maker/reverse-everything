@@ -2,6 +2,18 @@
 
 用于获得授权后的行为分析、独立重建、确定性回放与验证。仓库包含技能、Python Workbench、JavaScript 静态分析器/CDP runtime，以及供 Codex、Claude Code 和其他 MCP host 使用的插件。
 
+## Skill 与 MCP 的关系
+
+`reverse-replica` 技能负责分析流程、行为依据、独立重建和验收判断；`replica-workbench` MCP 提供案件、取证、回放、验证和报告等具体操作。两者没有同名冲突，同仓库用于一起维护配套的流程与执行工具。
+
+当前 `SKILL.md` 已加入 Workbench 工具路由。需要分别安装/加载技能并接入 MCP，旧版已安装技能也要更新；v0.1.1 的成品 ZIP 不会自动安装技能。案件格式和授权检查的区别见 [协作规则](references/workbench-mcp.md)。
+
+## MCP 接入有几条路径
+
+**2 条通用路径 + 1 条宿主相关路径**：CLI 注册（脚本与手动命令算同一条）、手动配置 stdio，以及宿主支持时的插件安装。Codex、Claude Code、通用 MCP host/DSH 是宿主分类；成品包和源码是运行模式。它们最终调用同一个 stdio MCP 服务，提供同样的 11 个工具。
+
+插件安装方式取决于宿主兼容性，尚未逐一实测各宿主安装界面。已有验证覆盖成品运行、真实 stdio 握手/调用和浏览器/CDP；详见 [接入路径与状态](replica-mcp-plugin/README.md#connection-paths)。
+
 ## 下载与使用
 
 Windows x64 成品见 [v0.1.1 Release](https://github.com/zyf-maker/reverse-replica/releases/tag/v0.1.1)。下载 `replica-workbench-mcp-win-x64-v0.1.1.zip` 并核对 `.sha256`，解压后执行：

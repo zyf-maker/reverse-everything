@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "browser": "ungoogled Chromium 155.0.8059.79",
+  "checks": [
+    "packaged CDP capture",
+    "packaged ws dependency",
+    "exact-origin request blocking"
+  ],
+  "blockedRequests": 1
+}

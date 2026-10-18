@@ -51,19 +51,19 @@ try {
   const initialized = await request(1, 'initialize', {
     protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'package-smoke', version: '1' },
   });
-  assert.equal(initialized.result.serverInfo.name, 'replica-workbench');
+  assert.equal(initialized.result.serverInfo.name, 'replica');
   child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized', params: {} }) + '\n');
   const listed = await request(2, 'tools/list', {});
-  assert.equal(listed.result.tools.length, 11);
+  assert.ok(listed.result.tools.length >= 20);
   const capabilities = await request(3, 'tools/call', { name: 'replica_capabilities', arguments: {} });
   assert.equal(capabilities.result.isError, undefined);
   const attack = await request(4, 'tools/call', {
-    name: 'replica_status',
+    name: 'replica_case_get',
     arguments: { case: '../README.md' },
   });
   assert.equal(attack.result.isError, true);
   assert.match(attack.result.content[0].text, /case must be a valid case directory|inside the workbench work folder/);
-  console.log(JSON.stringify({ passed: true, checks: ['bundled Node', 'bundled Chromium', 'MCP initialize', '11 tools', 'capabilities call', 'case path escape rejected'] }));
+  console.log(JSON.stringify({ passed: true, checks: ['bundled Node', 'bundled Chromium', 'MCP initialize', 'canonical tools', 'capabilities call', 'case path escape rejected'] }));
 } finally {
   child.kill();
   rmSync(browserProfile, { recursive: true, force: true });

@@ -7,14 +7,14 @@ DIST="$(cd "$DIST" && pwd -P)"
 VERSION="$(node --input-type=module -e "import fs from 'node:fs'; process.stdout.write(JSON.parse(fs.readFileSync(process.argv[1], 'utf8')).version)" "$ROOT/package.json")"
 case "$(uname -s)" in Linux) PLATFORM=linux ;; Darwin) PLATFORM=macos ;; *) echo 'Build on macOS or Linux for native output.' >&2; exit 1 ;; esac
 case "$(uname -m)" in x86_64|amd64) ARCH=x64 ;; arm64|aarch64) ARCH=arm64 ;; *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;; esac
-DEFAULT_OUT="$DIST/replica-workbench-mcp-$PLATFORM-$ARCH-v$VERSION"
+DEFAULT_OUT="$DIST/replica-unified-mcp-$PLATFORM-$ARCH-v$VERSION"
 if [[ "${1:-}" == '--clean' ]]; then OUT="$DEFAULT_OUT"; CLEAN='--clean'
 else OUT="${1:-$DEFAULT_OUT}"; CLEAN="${2:-}"; fi
 [[ "$CLEAN" == '' || "$CLEAN" == '--clean' ]] || { echo 'Second argument must be --clean.' >&2; exit 2; }
 mkdir -p "$(dirname "$OUT")"
 OUT_PARENT="$(cd "$(dirname "$OUT")" && pwd -P)"
 OUT="$OUT_PARENT/$(basename "$OUT")"
-[[ "$OUT_PARENT" == "$DIST" && "$(basename "$OUT")" == "replica-workbench-mcp-$PLATFORM-$ARCH-v$VERSION" ]] || {
+[[ "$OUT_PARENT" == "$DIST" && "$(basename "$OUT")" == "replica-unified-mcp-$PLATFORM-$ARCH-v$VERSION" ]] || {
   echo "Output must be the versioned package directory directly under $DIST." >&2; exit 2;
 }
 [[ ! -L "$OUT" ]] || { echo 'Refusing to build through a directory symlink.' >&2; exit 2; }
@@ -55,6 +55,7 @@ copy_tree "$ROOT/.claude-plugin" "$OUT/.claude-plugin"
 copy_tree "$ROOT/.codex-plugin" "$OUT/.codex-plugin"
 copy_file "$ROOT/install-host.sh" "$OUT/install-host.sh"
 copy_file "$ROOT/install-host.ps1" "$OUT/install-host.ps1"
+if [[ -d "$ROOT/../replica-core" ]]; then copy_tree "$ROOT/../replica-core" "$OUT/core"; fi
 mkdir -p "$OUT/workbench/work"
 for name in src scenarios config docs; do copy_tree "$ROOT/../replica-workbench/$name" "$OUT/workbench/$name"; done
 for name in pyproject.toml run.ps1 run.sh README.md THIRD_PARTY_NOTICES.md; do copy_file "$ROOT/../replica-workbench/$name" "$OUT/workbench/$name"; done
@@ -87,16 +88,18 @@ import path from 'node:path';
 const [root, version, platform, nodeVersion, pythonVersion, nodePath, pythonPath, browserPath] = process.argv.slice(2);
 const writeJson = (name, value) => fs.writeFileSync(path.join(root, name), `${JSON.stringify(value, null, 2)}\n`);
 writeJson('manifest.json', {
-  name: 'replica-workbench-mcp', version, platform, selfContained: true,
-  entry: 'server/index.mjs', browser: browserPath, node: nodePath, python: pythonPath,
-  runtimes: { node: nodeVersion, python: pythonVersion },
-  hosts: ['codex', 'claude-code', 'mcp-compatible']
+  schema: 'replica-unified/package/v1', name: 'replica-unified-mcp', version, platform, self_contained: true,
+  entry: { server: 'server/index.mjs', node: nodePath }, browser: browserPath, node: nodePath, python: pythonPath,
+  runtimes: { node: nodeVersion, python: pythonVersion }, mcp: { transport: 'stdio', protocol: '2025-06-18' },
+  hosts: ['codex', 'claude-code', 'mcp-compatible'],
+  required_files: ['server/index.mjs', 'core', nodePath, browserPath, 'licenses', 'manifest.json', 'mcp.json'],
+  optional_providers: []
 });
 writeJson('mcp.json', { mcpServers: {
-  'replica-workbench': { type: 'stdio', command: '\${PLUGIN_ROOT}/' + nodePath, args: ['\${PLUGIN_ROOT}/server/index.mjs'], cwd: '\${PLUGIN_ROOT}' }
+  'replica-unified': { type: 'stdio', command: '\${PLUGIN_ROOT}/' + nodePath, args: ['\${PLUGIN_ROOT}/server/index.mjs'], cwd: '\${PLUGIN_ROOT}' }
 } });
 writeJson('.mcp.json', { mcpServers: {
-  'replica-workbench': { command: '\${CLAUDE_PLUGIN_ROOT}/' + nodePath, args: ['\${CLAUDE_PLUGIN_ROOT}/server/index.mjs'], cwd: '\${CLAUDE_PLUGIN_ROOT}' }
+  'replica-unified': { command: '\${CLAUDE_PLUGIN_ROOT}/' + nodePath, args: ['\${CLAUDE_PLUGIN_ROOT}/server/index.mjs'], cwd: '\${CLAUDE_PLUGIN_ROOT}' }
 } });
 NODE
 

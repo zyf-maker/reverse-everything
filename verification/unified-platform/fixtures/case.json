@@ -1,0 +1,13 @@
+{
+  "schema": "replica-unified/case/v1",
+  "name": "contract-fixture",
+  "target": {"kind": "web", "locator": "fixtures/target.html"},
+  "scope": {
+    "schema": "replica-unified/scope/v1",
+    "actions": ["static", "runtime", "rebuild", "verify", "report"],
+    "targets": {"paths": ["fixtures/target.html"], "origins": ["http://127.0.0.1:8765"]},
+    "network": {"mode": "loopback", "egress": ["127.0.0.1:8765"]}
+  },
+  "authorization": {"status": "pending"},
+  "lifecycle": "pending"
+}

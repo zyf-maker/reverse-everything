@@ -21,9 +21,9 @@ foreach ($target in $targets) {
 
 foreach ($target in $targets) {
   if ($target -eq 'codex') {
-    & $commands[$target] mcp add replica-workbench -- $node $server
+    & $commands[$target] mcp add replica-unified -- $node $server
   } else {
-    & $commands[$target] mcp add --scope user --transport stdio replica-workbench -- $node $server
+    & $commands[$target] mcp add --scope user --transport stdio replica-unified -- $node $server
   }
   if ($LASTEXITCODE -ne 0) { throw "Registering Replica Workbench with $target failed with exit code $LASTEXITCODE" }
 }

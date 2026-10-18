@@ -1,112 +1,77 @@
-# Replica Workbench MCP Plugin
+# Replica MCP Plugin
 
-Replica Workbench is exposed as a local Model Context Protocol (MCP) server for Codex, Claude Code, and other MCP-capable agent hosts.
+This package exposes the unified Replica platform over local MCP stdio. The
+MCP surface is a single object model for reverse understanding, evidence,
+behavior reconstruction, and verification. It is not a collection of
+provider-specific tools.
 
-## Connection paths
+The canonical protocol is `replica-unified/v1`. A bundled `core/` directory is
+loaded as the in-process execution kernel, so case state, authorization,
+evidence links, runs and reports share one lifecycle. A package without the
+bundled core may use the Workbench bridge only as an explicit migration
+compatibility mode; that mode is not the unified release profile.
 
-There are **two general registration paths and one host-dependent plugin path**. All launch the same local stdio MCP server and expose the same 11 tools; they are alternative ways to register one server.
+## Canonical MCP tools
 
-| Path | Entry | Availability |
-| --- | --- | --- |
-| CLI registration | `install-host.ps1 -Agent codex` / `-Agent claude`, or the equivalent host CLI command below | Helper scripts for these two hosts are included. The helper and direct command count as one path. |
-| Manual stdio configuration | Configure an absolute Node executable path and absolute `server/index.mjs` argument in the host's MCP settings; use `mcp.json` as the package template | For DSH or another host that supports local stdio. Adapt to the host's configuration schema and replace placeholders when it does not expand them. |
-| Host plugin installation | Load the extracted directory through a host's supported plugin installer using the supplied manifests | Conditional on the host accepting the manifest and resolving its root placeholder. Installation through every host UI has not been verified. |
+- `replica_capabilities`, `replica_doctor`
+- `replica_case_create`, `replica_case_authorize`, `replica_case_get`
+- `replica_scope_check`, `replica_scope_define`, `replica_scope_get`
+- `replica_observe`, `replica_analyze`, `replica_action`
+- `replica_evidence_append`, `replica_evidence_add`, `replica_scenario_define`
+- `replica_run_start`, `replica_run_get`, `replica_run`, `replica_verify`, `replica_report_generate`, `replica_report`
 
-Codex, Claude Code, and generic stdio hosts (including DSH) are three **host categories**, not three different transports. The implementation currently has **one MCP transport: stdio**. The release ZIP and development checkout are two **runtime modes**; `mcp.dev.json` uses the development Node/Workbench instead of the bundled runtime. Select one registration for a given host to keep its server identity and Workbench directory consistent.
+The old `replica_init`, `replica_status`, `replica_capture`,
+`replica_add_evidence`, `replica_rebuild`, and `replica_replay` names remain
+as compatibility aliases. They map into the canonical operations and do not
+create a separate backend or security model.
 
-The verified release checks cover package startup, a real stdio MCP handshake and tool calls, and bundled browser/CDP behavior. They do not establish that every host's installer or UI has been exercised.
+## Core stdio contract
 
-## Cooperation with the Reverse Replica skill
+The standalone core CLI is also available as `node core/bin/replica-core.mjs
+--jsonl`. It reads one JSON object per line and writes one JSON object per line:
 
-`reverse-replica` is the reasoning/workflow skill; `replica-workbench` is the execution service. The repository keeps them together so the skill can use the service for case management, evidence, replay and verification while retaining its behavioral reconstruction and acceptance rules. The skill also retains REA/PentAGI branches for work beyond the Workbench backend.
+```json
+{
+  "schema": "replica-unified/v1",
+  "request_id": "unique-request-id",
+  "operation": "case.create",
+  "params": {"name": "example", "target": "./target", "basis": "written authorization"}
+}
+```
 
-Install/load the skill and register the MCP service separately. The v0.1.1 binary ZIP does not install `SKILL.md` into a host. The current repository skill contains an explicit Workbench route; update an older installed copy to use it. See [the cooperation rules](../references/workbench-mcp.md). Their two case/scope formats remain distinct and authorization is checked by the corresponding backend.
-
-## Which package should users download?
-
-The tested release is `replica-workbench-mcp-win-x64-v0.1.1.zip` for Windows x64. It contains the MCP server, Node.js, Python, unbranded Chromium, npm dependencies, Workbench, static analyzer, CDP runtime, host manifests, provenance, and bundled runtime license files. Check the adjacent `.sha256` file before extracting.
-
-Native runtimes are platform and architecture specific. The repository includes a native `build.sh` for future macOS/Linux builds, but those packages are not part of this tested release.
-
-After extraction, the package does not require a separate Node.js, Python, npm, pip package, or Chrome/Chromium installation. The Agent host remains a prerequisite: Codex, Claude Code, DSH, or another MCP host must be installed and must support local stdio MCP servers.
+The response includes `schema`, `request_id`, `operation`, `ok`, `status`, and
+either `result` or `error`. A packaged MCP server imports `core/src/index.mjs`;
+development can point at another checkout with `REPLICA_CORE_ROOT`.
 
 ## Register with a host
 
-The archive contains two host manifests:
-
-- `mcp.json` is the portable local stdio manifest using `${PLUGIN_ROOT}`.
-- `.mcp.json` and `.claude-plugin/plugin.json` are the Claude Code plugin files using `${CLAUDE_PLUGIN_ROOT}`.
-
-For a host with a plugin installer, install the extracted directory as a plugin. For a CLI host, run the bundled registration script from the extracted directory. The PowerShell switch is `-Agent`:
+The Windows x64 release is self-contained for Node, Python, Chromium, the
+Workbench compatibility runtime, and MCP dependencies. It still requires an
+MCP host such as Codex or Claude Code.
 
 ```powershell
-.\install-host.ps1 -Agent codex
-.\install-host.ps1 -Agent claude
+codex mcp add replica-unified -- C:\path\to\package\runtime\node.exe C:\path\to\package\server\index.mjs
 ```
 
-On macOS/Linux:
+The portable `mcp.json` and Claude `.mcp.json` manifests remain available for
+hosts that install local plugins. Restart the host after registration.
 
-```bash
-./install-host.sh codex
-./install-host.sh claude
-```
+## Security boundary
 
-The scripts call the host's own CLI and do not download packages. Restart the host and inspect its MCP server list after registration. If a host does not expand its plugin-root placeholder, replace `${PLUGIN_ROOT}` or `${CLAUDE_PLUGIN_ROOT}` in the matching manifest with the extracted directory's absolute path.
+`replica_case_create` always creates a pending case. An operator must grant
+authorization through the native case workflow before scoped observation,
+analysis, replay, or verification can run. The MCP server does not expose
+arbitrary shell execution, authorization bypass, or unrestricted network
+access.
 
-Codex CLI form:
-
-```text
-codex mcp add replica-workbench -- /absolute/path/replica-workbench-mcp-win-x64-v0.1.1/runtime/node.exe /absolute/path/replica-workbench-mcp-win-x64-v0.1.1/server/index.mjs
-```
-
-Claude Code form:
-
-```text
-claude mcp add --scope user --transport stdio replica-workbench -- /absolute/path/replica-workbench-mcp-win-x64-v0.1.1/runtime/node.exe /absolute/path/replica-workbench-mcp-win-x64-v0.1.1/server/index.mjs
-```
-
-DSH and other MCP hosts can use the same structured stdio entry: executable, argument array, working directory, and optional environment mapping. The host's own plugin manifest rules still apply.
-
-## What the installed plugin can do
-
-An agent can list capabilities, create and inspect authorized cases, run static inventories, collect bounded CDP browser evidence, append evidence, create an independent rebuild scaffold, replay deterministic scenarios, run verification, and generate Markdown reports.
-
-The native Workbench remains the security boundary. An operator must authorize a case before scoped analysis or capture can run. Case paths and browser endpoints are allowlisted, and the agent cannot self-grant authorization. The plugin does not provide arbitrary shell execution, authorization bypass, or remote browser access.
-
-## Verify after installation
-
-From the extracted directory:
+## Verify locally
 
 ```powershell
-& .\runtime\node.exe .\server\doctor.mjs
+npm test
+node server/doctor.mjs
 ```
 
-The command must print JSON with `"ready": true` and exit with code `0`. It checks the bundled Workbench and Python/Node/browser path used by the MCP bridge. A host may still show a separate approval or trust state after the local doctor passes.
-
-## Build and release
-
-The source checkout is for developers. It requires the development runtimes and the sibling `replica-workbench/` and `own-reverse-platform/` directories. The Windows build pins and verifies unbranded ungoogled Chromium `155.0.8059.79-1.1` and the upstream archive SHA-256 in `browser-lock.json`:
-
-```powershell
-cd replica-mcp-plugin
-.\build.ps1 -Clean
-```
-
-This produces a versioned directory, a ZIP archive, and a SHA-256 file under `dist/`. Set `-PythonHome` only when the portable Python input is not discoverable; the pinned browser archive is downloaded or read from `verification/ungoogled-chromium-155.0.8059.79-1.1-win64.zip`.
-
-The source-mode installer remains available for contributors, but it expects the development environment and does not create a self-contained release:
-
-```powershell
-.\install.ps1
-npm run doctor
-```
-
-## Release contract
-
-The release package is self-contained for its declared operating system and CPU architecture. It is “download, extract, register with an installed Agent host, and use.” It is not a standalone Agent application and cannot run without a host that launches MCP servers.
-
-Version 0.1.1 replaces the earlier snapshot with an unbranded ungoogled Chromium distribution. The build exports all 770 components from this exact browser's generated `chrome://credits/` into offline HTML and plain text under `licenses/`, retains the original export, and records content hashes and the component inventory. Empty, sample, missing-license, or unexpected component counts stop packaging. Root Chromium and ungoogled Chromium license texts and pinned source/build references are included. The adjacent Chromium source companion and patch archives accompany the GitHub release; see `licenses/SOURCE_CODE.md`.
-
-This fixes the earlier missing-notice defect. The generated inventory describes the upstream browser build; it is not an independent legal certification. Preserve the notices and corresponding source companions when redistributing.
-
-The macOS/Linux build is not validated by this Windows release and requires `BROWSER_LOCK` for its own verified browser version and exact generated component count. It also rejects missing runtime licenses.
+The release builder copies `replica-core/` into the package as `core/` when
+that source directory exists, along with the MCP server and compatibility
+runtime. Browser notices are generated from the exact bundled Chromium binary;
+the build refuses to produce a package when those notices are incomplete.

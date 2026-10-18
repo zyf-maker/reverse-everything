@@ -1,5 +1,5 @@
 {
-  "name": "replica-workbench",
-  "version": "0.1.1",
-  "description": "Evidence-driven, authorization-scoped website reconstruction tools over MCP."
+  "name": "replica-unified",
+  "version": "0.2.0",
+  "description": "Unified evidence-driven reconstruction and verification platform over MCP."
 }

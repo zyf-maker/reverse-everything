@@ -1,62 +1,68 @@
-# Reverse Replica / Replica Workbench
+# Reverse Replica Unified Platform
 
-用于获得授权后的行为分析、独立重建、确定性回放与验证。仓库包含技能、Python Workbench、JavaScript 静态分析器/CDP runtime，以及供 Codex、Claude Code 和其他 MCP host 使用的插件。
+这是一个统一的逆向理解、证据管理、独立重建、回放验证和受控安全检查平台。`reverse-replica` skill、JavaScript 分析器、浏览器/CDP、桌面/native/mobile 能力和安全验证都遵循同一个 `replica-unified/v1` 案件、授权、scope、evidence、run、report 协议。
 
-## Skill 与 MCP 的关系
+## 重构状态
 
-`reverse-replica` 技能负责分析流程、行为依据、独立重建和验收判断；`replica-workbench` MCP 提供案件、取证、回放、验证和报告等具体操作。两者没有同名冲突，同仓库用于一起维护配套的流程与执行工具。
+截至 2026-10-18，统一内核和 MCP 接口已经重写并通过核心测试、MCP 生命周期测试和统一合约测试。REA、PentAGI、reverse-skill 的方法与能力类别已内化为 capability contract；它们不再是 MCP 的平行后端或必须安装的运行时。
 
-当前 `SKILL.md` 已加入 Workbench 工具路由。需要分别安装/加载技能并接入 MCP，旧版已安装技能也要更新；v0.1.1 的成品 ZIP 不会自动安装技能。案件格式和授权检查的区别见 [协作规则](references/workbench-mcp.md)。
+可用能力会由 `replica_capabilities` 和 `replica_doctor` 如实报告。JavaScript 静态分析、重建脚手架、确定性 replay、verification、report、scenario 和 worker 在无外部 provider 时可运行；浏览器/CDP、native、mobile 和主动 security 在缺少对应工具链时返回 `degraded`，不会伪装成完成。
 
-## MCP 接入有几条路径
+旧的 `replica-workbench-mcp` v0.1.x ZIP 是历史 Workbench-first 预览，不是这次统一重构的发行包。旧案件迁移时必须重新建立 unified case、operator authorization、scope、evidence chain、run 和 report，详见 [`docs/unified-platform-migration.md`](docs/unified-platform-migration.md)。
 
-**2 条通用路径 + 1 条宿主相关路径**：CLI 注册（脚本与手动命令算同一条）、手动配置 stdio，以及宿主支持时的插件安装。Codex、Claude Code、通用 MCP host/DSH 是宿主分类；成品包和源码是运行模式。它们最终调用同一个 stdio MCP 服务，提供同样的 11 个工具。
+## Skill 与 MCP
 
-插件安装方式取决于宿主兼容性，尚未逐一实测各宿主安装界面。已有验证覆盖成品运行、真实 stdio 握手/调用和浏览器/CDP；详见 [接入路径与状态](replica-mcp-plugin/README.md#connection-paths)。
+`SKILL.md` 定义分析、取证、重建和验收流程；`replica-unified` MCP 执行统一内核中的具体操作。skill 不再把 REA、PentAGI 或 Workbench 当作互相竞争的路由分支。旧 `replica_*` 工具名仍作为兼容别名，但会映射到统一记录模型。
 
-## 下载与使用
+## 接入 Codex
 
-Windows x64 成品见 [v0.1.1 Release](https://github.com/zyf-maker/reverse-replica/releases/tag/v0.1.1)。下载 `replica-workbench-mcp-win-x64-v0.1.1.zip` 并核对 `.sha256`，解压后执行：
-
-```powershell
-.\install-host.ps1 -Agent codex
-# 或 .\install-host.ps1 -Agent claude
-.\runtime\node.exe .\server\doctor.mjs
-```
-
-成品包含 Node.js、Python、无品牌 Chromium 和依赖；仍需安装支持本地 stdio MCP 的 Agent host。通用 host 可使用包内 `mcp.json`。这是 Windows x64 发行包，macOS/Linux 构建尚未验证。
-
-## 目录
-
-- `SKILL.md`、`scripts/`、`references/`：原有 Reverse Replica 技能。
-- `replica-mcp-plugin/`：11 个 MCP 工具、host 注册脚本、发行构建与许可证校验。
-- `replica-workbench/`：case、授权范围、证据、回放验证和报告。
-- `own-reverse-platform/`：静态分析器与 CDP runtime。
-- `target-2048/`、`replica-2048/`：对照 fixture 与独立实现，保留各自许可。
-- `docs/research/chromium-notices.md`：Chromium notice 问题的依据和修复记录。
-
-## Chromium notice 修复
-
-v0.1.1 已更换旧 snapshot，固定使用 ungoogled Chromium `155.0.8059.79-1.1`，核对上游 archive SHA-256。构建从实际打包的浏览器导出 770 条 credits，提供离线 HTML、纯文本、原始导出和组件/哈希清单，并附 Chromium、ungoogled Chromium 的许可。遇到样例 credits、缺失许可或组件数量不符时停止打包。
-
-同一 Release 提供 Chromium 对应源码（约 2 GB）和两个精确版本的补丁/构建源码包。转发二进制时同时提供这些源码材料和 `licenses/SOURCE_CODE.md`。这是对已发现缺口的技术修复，不表示取得独立法律认证。详细内容见 [插件文档](replica-mcp-plugin/README.md)。
-
-## 从源码运行和检查
-
-安装 Python 3.10+、Node.js 20+，在 `own-reverse-platform/runtime` 与 `replica-mcp-plugin` 分别执行 `npm ci`。工作目录保留空的 `replica-workbench/work/` 用来存放新建 case。插件的源码模式安装见其 README。
+源码模式：
 
 ```powershell
 cd replica-mcp-plugin
-npm test
-python -m unittest discover -s test -p test_browser_notices.py -v
-.\build.ps1
+npm ci
+codex mcp add replica-unified -- node "$PWD/server/index.mjs"
+codex mcp list
 ```
 
-完整发行材料校验（`verification/` 放入 `source-lock.json` 列出的三个源码包）：
+Windows x64 自包含包使用包内 Node：
 
 ```powershell
-python replica-mcp-plugin/scripts/verify_release.py --archive replica-mcp-plugin/dist/replica-workbench-mcp-win-x64-v0.1.1.zip --sources verification
-node verification/plugin-package-smoke.mjs replica-mcp-plugin/dist/replica-workbench-mcp-win-x64-v0.1.1
+.\install-host.ps1 -Agent codex
+# 或手动注册
+codex mcp add replica-unified -- C:\path\to\package\runtime\node.exe C:\path\to\package\server\index.mjs
 ```
 
-项目运行过程中仍须记录目标授权与范围；MCP 端不能自行授予授权。
+注册后重启 Codex，在 MCP 列表中确认 `replica-unified`，再调用 `replica_capabilities` 和 `replica_doctor`。插件本身通过 stdio 提供 MCP；Codex 是宿主，skill 需要单独安装或更新到同一版本。
+
+## 统一工具
+
+核心工具包括：
+
+`replica_capabilities`、`replica_doctor`、`replica_case_create`、`replica_case_authorize`、`replica_case_get`、`replica_scope_check`、`replica_evidence_append`、`replica_run_start`、`replica_run_get`、`replica_report_generate`。
+
+同时保留 `replica_observe`、`replica_analyze`、`replica_action`、`replica_scenario_define`、`replica_verify` 及旧 Workbench 别名。案件创建后默认是 pending；没有 operator attestation、有效期和 scope 的调用会被拒绝。
+
+## Chromium notice
+
+旧 snapshot 的 sample credits 缺口不能通过声明解决。发行构建必须从打包的确切 Chromium 二进制生成 credits，并把 HTML、纯文本、原始导出、组件哈希、许可证和源码来源放进 `licenses/`；notice 不完整时构建脚本直接失败。当前仓库保留生成器、锁定文件和验证脚本，但没有把未构建的源码 checkout 称为已发布的自包含包。
+
+## 验证
+
+```powershell
+cd replica-core
+npm test
+cd ..\replica-mcp-plugin
+npm test
+cd ..
+$env:REPLICA_UNIFIED_COMMAND_JSON='["node","replica-mcp-plugin/server/index.mjs"]'
+node verification/unified-platform/contract-test.mjs
+```
+
+统一包契约：
+
+```powershell
+node verification/unified-platform/package-contract-test.mjs <extracted-package>
+```
+
+包结构、迁移规则和限制见 [`docs/unified-platform-architecture.md`](docs/unified-platform-architecture.md)、[`docs/unified-platform-migration.md`](docs/unified-platform-migration.md) 和 [`replica-mcp-plugin/README.md`](replica-mcp-plugin/README.md)。

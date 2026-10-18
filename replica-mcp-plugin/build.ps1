@@ -11,9 +11,9 @@ $repo = (Resolve-Path (Join-Path $plugin '..')).Path
 $package = Get-Content -LiteralPath (Join-Path $plugin 'package.json') -Raw | ConvertFrom-Json
 $version = $package.version
 $distRoot = [IO.Path]::GetFullPath((Join-Path $plugin 'dist')).TrimEnd('\')
-if (-not $Output) { $Output = Join-Path $distRoot "replica-workbench-mcp-win-x64-v$version" }
+if (-not $Output) { $Output = Join-Path $distRoot "replica-unified-mcp-win-x64-v$version" }
 $Output = [IO.Path]::GetFullPath($Output)
-if ([IO.Path]::GetDirectoryName($Output) -ine $distRoot -or [IO.Path]::GetFileName($Output) -notmatch '^replica-workbench-mcp-win-x64-v\d+\.\d+\.\d+$') { throw "Output must be a versioned direct child of $distRoot" }
+if ([IO.Path]::GetDirectoryName($Output) -ine $distRoot -or [IO.Path]::GetFileName($Output) -notmatch '^replica-unified-mcp-win-x64-v\d+\.\d+\.\d+$') { throw "Output must be a versioned direct child of $distRoot" }
 $zipPath = "$Output.zip"
 $hashPath = "$zipPath.sha256"
 if (Test-Path -LiteralPath $Output) {
@@ -81,6 +81,11 @@ Copy-Tree (Join-Path $plugin '.codex-plugin') (Join-Path $Output '.codex-plugin'
 Copy-File (Join-Path $plugin 'install-host.ps1') (Join-Path $Output 'install-host.ps1')
 Copy-File (Join-Path $plugin 'install-host.sh') (Join-Path $Output 'install-host.sh')
 
+# Bundle the unified core when the source checkout provides one. The MCP
+# server also supports an externally supplied REPLICA_CORE_ROOT for development.
+$coreSource = Join-Path $repo 'replica-core'
+if (Test-Path -LiteralPath $coreSource) { Copy-Tree $coreSource (Join-Path $Output 'core') }
+
 $workbench = Join-Path $Output 'workbench'
 New-Item -ItemType Directory -Force -Path (Join-Path $workbench 'work') | Out-Null
 foreach ($name in @('src','scenarios','config','docs')) { Copy-Tree (Join-Path $repo "replica-workbench\$name") (Join-Path $workbench $name) }
@@ -114,9 +119,9 @@ if (Test-Path -LiteralPath (Join-Path $PythonHome 'DLLs')) { Copy-Tree (Join-Pat
 Copy-PythonTree (Join-Path $PythonHome 'Lib') (Join-Path $python 'Lib')
 
 $manifest = [ordered]@{
-  name='replica-workbench-mcp'; version=$version; platform='win-x64'; selfContained=$true
-  entry='server/index.mjs'; browser='runtime/chrome/chrome.exe'; node='runtime/node.exe'; python='runtime/python/python.exe'
-  runtimes=[ordered]@{ node=$nodeVersion; python=$pythonVersion; chromium=$chromiumVersion; chromiumRevision=$chromiumRevision }; hosts=@('codex','claude-code','mcp-compatible')
+  schema='replica-unified/package/v1'; name='replica-unified-mcp'; version=$version; platform='win-x64'; self_contained=$true
+  entry=[ordered]@{ server='server/index.mjs'; node='runtime/node.exe' }; browser='runtime/chrome/chrome.exe'; node='runtime/node.exe'; python='runtime/python/python.exe'
+  runtimes=[ordered]@{ node=$nodeVersion; python=$pythonVersion; chromium=$chromiumVersion; chromiumRevision=$chromiumRevision }; hosts=@('codex','claude-code','mcp-compatible'); mcp=[ordered]@{ transport='stdio'; protocol='2025-06-18' }; required_files=@('server/index.mjs','core','runtime/node.exe','runtime/chrome','licenses','manifest.json','mcp.json'); optional_providers=@()
 }
 $manifestJson = $manifest | ConvertTo-Json -Depth 8
 [IO.File]::WriteAllText((Join-Path $Output 'manifest.json'), "$manifestJson`n", [Text.UTF8Encoding]::new($false))

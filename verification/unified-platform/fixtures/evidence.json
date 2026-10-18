@@ -1,0 +1,11 @@
+{
+  "schema": "replica-unified/evidence/v1",
+  "kind": "observation",
+  "state": "observed",
+  "authority": "runtime",
+  "content_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "content": {"event": "page-ready", "url": "http://127.0.0.1:8765/"},
+  "provenance": {"source": "contract-fixture", "captured_at": "2026-01-01T00:00:00Z", "tool": "replica-unified-contract"},
+  "limitations": ["Synthetic fixture; no production target bytes."],
+  "parent_ids": []
+}

@@ -1,0 +1,6 @@
+{
+  "id": "page-ready",
+  "phase": "verify",
+  "steps": [{"action": "navigate", "url": "http://127.0.0.1:8765/"}, {"action": "assert", "predicate": "document.readyState == complete"}],
+  "expected": {"passed": 1, "failed": 0}
+}

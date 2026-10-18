@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zyf-maker.github.io/reverse-replica/schemas/replica-unified-v1.json",
+  "title": "Replica Unified Platform Contract",
+  "description": "The durable records shared by static, runtime, rebuild, replay, and security phases.",
+  "type": "object",
+  "required": ["schema", "records", "mcp"],
+  "properties": {
+    "schema": {"const": "replica-unified/v1"},
+    "records": {
+      "type": "object",
+      "required": ["case", "scope", "evidence", "run", "report"],
+      "properties": {
+        "case": {"$ref": "#/$defs/case"},
+        "scope": {"$ref": "#/$defs/scope"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "run": {"$ref": "#/$defs/run"},
+        "report": {"$ref": "#/$defs/report"}
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "required": ["transport", "tools"],
+      "properties": {
+        "transport": {"const": "stdio"},
+        "tools": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 10,
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "case": {
+      "type": "object",
+      "required": ["schema", "id", "target", "scope", "authorization", "lifecycle"],
+      "properties": {
+        "schema": {"const": "replica-unified/case/v1"},
+        "id": {"type": "string", "minLength": 1},
+        "target": {
+          "type": "object",
+          "required": ["kind", "locator"],
+          "properties": {
+            "kind": {"enum": ["web", "javascript", "desktop", "native", "mobile", "security"]},
+            "locator": {"type": "string", "minLength": 1}
+          }
+        },
+        "scope": {"$ref": "#/$defs/scope"},
+        "authorization": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {"enum": ["pending", "granted", "expired", "revoked"]},
+            "basis": {"type": "string"},
+            "issuer": {"type": "string"},
+            "expires_at": {"type": "string", "format": "date-time"}
+          }
+        },
+        "lifecycle": {"enum": ["pending", "active", "closed"]}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["schema", "actions", "targets", "network"],
+      "properties": {
+        "schema": {"const": "replica-unified/scope/v1"},
+        "actions": {
+          "type": "array",
+          "items": {"enum": ["static", "runtime", "network", "binary", "mobile", "security", "rebuild", "verify", "report"]},
+          "uniqueItems": true
+        },
+        "targets": {
+          "type": "object",
+          "required": ["paths", "origins"],
+          "properties": {
+            "paths": {"type": "array", "items": {"type": "string"}},
+            "origins": {"type": "array", "items": {"type": "string", "format": "uri"}}
+          }
+        },
+        "network": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": {"enum": ["offline", "loopback", "allowlist"]},
+            "egress": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["schema", "id", "case_id", "kind", "state", "authority", "content_sha256", "provenance"],
+      "properties": {
+        "schema": {"const": "replica-unified/evidence/v1"},
+        "id": {"type": "string", "minLength": 1},
+        "case_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["artifact", "observation", "event", "finding", "control", "snapshot"]},
+        "state": {"enum": ["observed", "inferred", "tested", "rejected"]},
+        "authority": {"enum": ["artifact-bytes", "runtime", "operator", "derived", "tool"]},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "provenance": {
+          "type": "object",
+          "required": ["source", "captured_at"],
+          "properties": {"source": {"type": "string"}, "captured_at": {"type": "string", "format": "date-time"}, "tool": {"type": "string"}}
+        },
+        "limitations": {"type": "array", "items": {"type": "string"}},
+        "parent_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["schema", "id", "case_id", "phase", "status", "input_evidence_ids", "output_evidence_ids"],
+      "properties": {
+        "schema": {"const": "replica-unified/run/v1"},
+        "id": {"type": "string", "minLength": 1},
+        "case_id": {"type": "string", "minLength": 1},
+        "phase": {"enum": ["observe", "analyze", "rebuild", "replay", "verify", "security"]},
+        "status": {"enum": ["queued", "running", "succeeded", "failed", "blocked"]},
+        "input_evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "output_evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "policy_snapshot": {"type": "object"}
+      }
+    },
+    "report": {
+      "type": "object",
+      "required": ["schema", "case_id", "verdict", "run_ids", "evidence_ids", "coverage", "limitations"],
+      "properties": {
+        "schema": {"const": "replica-unified/report/v1"},
+        "case_id": {"type": "string", "minLength": 1},
+        "verdict": {"enum": ["READY", "PARTIAL", "BLOCKED", "FAILED"]},
+        "run_ids": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "coverage": {"type": "object", "required": ["scenarios", "passed", "failed"], "properties": {"scenarios": {"type": "integer", "minimum": 0}, "passed": {"type": "integer", "minimum": 0}, "failed": {"type": "integer", "minimum": 0}}},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

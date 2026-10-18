@@ -1,41 +1,43 @@
 ---
 name: reverse-replica
 description: >
-  逆向理解已有网页、桌面应用或软件包的可观测行为，并独立重写和验证等价实现。
-  适用于功能复刻、成品分析和行为兼容重建；普通完整源码仓库的架构阅读直接使用代码分析工具。
+  使用统一 Replica 平台逆向理解网页、JavaScript、桌面应用和软件包，记录可追溯证据，独立重建并验证行为等价性。
 ---
 
 # Reverse Replica
 
-交付可运行的重写项目、可追溯的行为依据和可复跑的对比验证。保留目标的已观测怪癖，区分观察、推断、未知，不把“工具安装成功”写成“能力已验证”。
+这个 skill 负责分析方法、证据判断、独立重建和验收口径；`replica-unified` MCP 负责统一内核中的案件、授权、scope、观察、分析、运行和报告。两者配合使用，不是两个互相竞争的后端。
 
-## 范围与工具选择
+## 统一平台
 
-先明确目标版本/commit、完整功能边界、重写技术栈及验收口径。用户未指定技术栈时优先选择易运行且依赖少的方案。用户已授权的确定性步骤连续完成，不在每一步重复索取确认；缺少目标授权或必须改变验收范围时才补充确认。
+所有工作都使用 `replica-unified/v1`：
 
-- **Replica Workbench MCP**：当前宿主提供 `replica_capabilities` 等 `replica_*` 工具，且任务是 Web/JavaScript 分析、取证或重建验证时，先读 [Workbench 协作规则](references/workbench-mcp.md)，再用其案件与证据流程执行下文步骤。Skill 负责行为依据、独立实现和验收判断，MCP 负责具体操作。MCP 未接入时使用下列工具分支；同一阶段选定一个执行后端，切换时记录原因与证据位置。
-- **REA**：优先用已安装 CLI 或当前会话中的 MCP。静态 JS 不需要原生引擎；Web/CDP 需要实际浏览器端点；native、Android 分别检查对应 provider。仅修改当前客户端所需配置，保留已有配置与符号链接。
-- **reverse-skill**：可选的场景方法库，非必需依赖。找到仓库后读其 RULES、PRIMARY 和所需引用；路由结果须按目标 skill 的适用范围复核。生成索引只是快照，不能替代 MCP 握手和实际调用。
-- **PentAGI**：只在需要主动安全验证时使用。纯静态项目可做静态与本地运行时安全检查，无须为普通功能复刻强制启动渗透平台。若用户要求验证三工具，则三者分别留真实调用证据。
+- `case`：目标、版本、生命周期和 operator authorization。
+- `scope`：允许的动作、路径、origin、CDP endpoint 和网络模式。
+- `observation` / `evidence` / `finding`：原始事实、来源、推断和限制。
+- `action` / `scenario` / `run`：受控执行、确定性步骤、策略快照和输出。
+- `verification` / `report`：有边界的复现结论和 provenance 链。
 
-工具接入、MCP 验证和 PentAGI 的条件分支见 [工具验证](references/tool-verification.md)。
+REA、PentAGI 和 reverse-skill 的有效方法已转为内部 capability contract。它们可以作为实现参考或未来 provider，但 MCP 不把它们暴露成平行路由，也不要求它们安装后才能建立案件、追加证据或生成报告。
 
-## 执行与验证
+## 工作流程
 
-1. **预检**：Workbench MCP 路径调用 `replica_capabilities` 和 `replica_doctor`，按本次所需操作判定能力；使用 REA/其他外部工具的路径运行本技能的 `scripts/preflight.ps1 -TargetType web -CdpEndpoint http://127.0.0.1:9227 -Json`，或 `bash scripts/preflight.sh --target web --cdp-endpoint http://127.0.0.1:9227 --json`。静态 JS 用 `javascript`，原生用 `binary`，APK 用 `mobile`，安全栈用 `pentest`。自定义 PentAGI compose 项目同时指定 `-PentagiPath <目录> -ComposeFile <文件名>`。
-   预检只调用本地安装，不下载、不安装、不会修改配置；子进程有超时。READY 仅指报告列出的先决条件；DEGRADED 说明可用替代路径和缺失能力。PentAGI 状态不会仅凭容器健康升为端到端 READY。
-2. **授权与目标约束**：对本地样本记录来源、许可与用户任务；主动安全操作必须有明确授权和目标白名单。Workbench MCP 路径按其原生案件格式检查 `replica_status`，由 Workbench 验证有效期、目标和端点范围；接入与 operator 授权步骤见协作规则。REA/其他外部工具路径使用 [scope 格式](references/tool-verification.md#scope) 创建案件文件，运行 `python scripts/scope.py --scope <case.json> --action <static|runtime|network|pentest> --target <path-or-url>`；非零退出即停止相应操作。两套案件格式分别由各自检查器验证，授权不自动互通。路径按解析后的真实路径校验，URL 按精确 origin 校验，过期/pending 不放行。
-   REA 静态 JS 路径优先使用同一检查器的 `--run-rea analyze-javascript-application` 入口，校验失败不会启动 REA。其他外部工具调用前也先过对应 scope；这个检查器不是操作系统沙箱，网络边界仍需独立验证。
-3. **取证**：运行本地目标，在受控输入下采集状态、输出、存储和必要的网络行为。源码用于定位和交叉核对；说明每处测试注入，避免测量补丁改变被测逻辑。动画/随机过程才需要时钟与随机源对齐，普通业务不强制套用这些方法。
-4. **依据清单**：每条核心行为附出处、预测、实测结果及限制。用正常、边界、错误和重复执行案例支持结论；一次命中不能代表全覆盖。关键未知先补观测，不能把推断写成事实。验收范围变化后重新检查随机消费者、初始状态和范围清单。
-5. **重写并测试**：独立实现业务逻辑，记录复用的许可证资源。允许本地构建、单元测试和隔离运行；不要求等到最后才首次执行。逐步与目标对比，发现差异记录首个分歧和原因，再修复或明确约定偏差。
-6. **安全验证与交付**：按项目实际风险验证输入、存储、依赖及网络行为。PentAGI 启用时先验模型工具调用、embedding 和实际 worker 网络，再对本地白名单目标执行有界任务，等待最终报告。交付项目、启动命令、证据、测试结果、范围外项和仍未验证的能力。历史结果与本次实测分开写。
+1. 明确目标版本、授权来源、目标范围和验收标准。
+2. 调用 `replica_capabilities`、`replica_doctor`，把 `ready`、`degraded` 和缺失依赖写入记录。
+3. 调用 `replica_case_create` 创建 pending case；只有 operator 明确提供 basis、issuer、attestation 和 future expiry 后，才调用 `replica_case_authorize`。
+4. 通过 `replica_scope_check` 检查每个动作和 target。pending、过期或超出 allowlist 的操作必须停止。
+5. 先收集正常、边界、错误和重复执行的观察，再把原始输入、环境、来源和限制写入 `replica_evidence_append`。
+6. 使用 `replica_run_start`、`replica_run_get`、`replica_verify` 运行重建、replay 和验证。每个 run 必须保留 policy snapshot 和 evidence IDs。
+7. 使用 `replica_report_generate` 输出覆盖范围、通过/失败检查、限制和未验证项。READY 只表示列出的验证点通过，不表示穷尽证明。
 
-## 可证伪的验收
+## 能力状态
 
-- 指定相同输入、初始条件、目标版本、运行环境和容差；状态机/协议用精确值，视觉用声明区域与阈值。
-- 同时覆盖核心逻辑和对外行为：输入、异常、重启/恢复、持久化、界面/动画，以及项目包含的后端接口。
-- 对比失败时先核对测量环境、时钟/随机流、重复包装与初始状态，再改实现；不要一律认定原模型或测量工具正确。
-- “完整”指已声明项目范围逐项通过，不意味着任意浏览器/平台、未知线上服务或全部安全性质已被证明。
+JavaScript 静态分析、重建脚手架、确定性 replay、contract verification、报告、scenario 和 worker 是内置能力。浏览器/CDP、native、mobile 和主动 security 依赖环境或明确注册的 adapter；缺失时必须返回 typed `degraded`，不能把计划、占位或工具安装成功写成已验证能力。
 
-脚本回归：`python scripts/test_preflight.py`。跨平台共用 Python 标准库核心，两个 shell 入口仅做参数转发。测试夹具不能替代真实 REA/CDP、MCP、embedding 或 PentAGI flow 验收。
+## 安全边界
+
+MCP 不自行授予授权，不暴露任意 shell，不绕过 scope。主动网络或安全验证只能针对 operator 已授权的 loopback/allowlist 目标，并记录限制、输入、输出和证据来源。历史 Workbench、REA 或 PentAGI 导出只能作为 evidence 导入，不能改变统一 authorization、scope 或 verdict。
+
+## 交付标准
+
+交付时说明目标版本、运行环境、授权和 scope、证据位置、测试命令、差异、限制和未验证能力。旧 `replica-workbench-mcp` v0.1.x 发行包是历史兼容版本，不得描述为统一重构完成品；迁移规则见 `docs/unified-platform-migration.md`。

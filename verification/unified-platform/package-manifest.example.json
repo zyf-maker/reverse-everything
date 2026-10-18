@@ -1,0 +1,17 @@
+{
+  "schema": "replica-unified/package/v1",
+  "name": "replica-unified-mcp",
+  "version": "0.2.0",
+  "platform": "win-x64",
+  "self_contained": true,
+  "host_required": "mcp-host",
+  "entry": {"server": "server/index.mjs", "node": "runtime/node.exe"},
+  "mcp": {"transport": "stdio", "protocol": "2025-06-18"},
+  "runtimes": {"node": "bundled", "python": "bundled-or-none", "chromium": "bundled"},
+  "required_files": [
+    "server/index.mjs", "core", "runtime/node.exe", "runtime/chrome",
+    "licenses", "manifest.json", "mcp.json"
+  ],
+  "optional_providers": [],
+  "provenance": {"source_lock": "licenses/SOURCE_CODE.md", "artifact_sha256": "<sha256>"}
+}

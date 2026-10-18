@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "replica-workbench": {
+    "replica-unified": {
       "command": "${CLAUDE_PLUGIN_ROOT}/runtime/node.exe",
       "args": ["${CLAUDE_PLUGIN_ROOT}/server/index.mjs"],
       "cwd": "${CLAUDE_PLUGIN_ROOT}"

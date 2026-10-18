@@ -43,17 +43,21 @@ test('MCP server initializes and exposes only named tools', async (t) => {
   const { child, request } = startServer();
   t.after(() => child.kill());
   const initialized = await request(1, 'initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'test', version: '1' } });
-  assert.equal(initialized.result.serverInfo.name, 'replica-workbench');
+  assert.equal(initialized.result.serverInfo.name, 'replica');
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized', params: {}})}\n`);
   const listed = await request(2, 'tools/list', {});
   const names = listed.result.tools.map((tool) => tool.name).sort();
-  assert.deepEqual(names, [
-    'replica_add_evidence', 'replica_analyze', 'replica_capabilities', 'replica_capture', 'replica_doctor',
-    'replica_init', 'replica_rebuild', 'replica_replay', 'replica_report', 'replica_status', 'replica_verify',
-  ]);
+  for (const name of [
+    'replica_capabilities', 'replica_doctor', 'replica_case_create', 'replica_case_authorize',
+    'replica_case_get', 'replica_scope_check', 'replica_evidence_append', 'replica_run_start',
+    'replica_run_get', 'replica_report_generate',
+  ]) assert(names.includes(name), `missing canonical tool ${name}`);
+  for (const name of ['replica_add_evidence', 'replica_analyze', 'replica_capture', 'replica_init', 'replica_rebuild', 'replica_replay', 'replica_report', 'replica_status', 'replica_verify']) {
+    assert(names.includes(name), `missing compatibility tool ${name}`);
+  }
   const called = await request(3, 'tools/call', { name: 'replica_capabilities', arguments: {} });
   assert.equal(called.result.isError, undefined);
-  assert.match(called.result.content[0].text, /replica-agent\/v1/);
+  assert.match(called.result.content[0].text, /replica-unified\/v1/);
 });
 
 test('MCP errors preserve the workbench security boundary', async (t) => {

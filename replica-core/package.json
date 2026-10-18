@@ -1,0 +1,17 @@
+{
+  "name": "replica-core",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Unified evidence-driven reconstruction domain and execution kernel",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "bin": {
+    "replica-core": "./bin/replica-core.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  }
+}

@@ -45,6 +45,18 @@ development can point at another checkout with `REPLICA_CORE_ROOT`.
 
 ## Register with a host
 
+The npm distribution is the lightweight cross-platform path. It requires
+Node.js 20+ and downloads the JavaScript MCP dependencies through npm; Python
+and Chromium are optional for capabilities that need them.
+
+```powershell
+npx -y replica-unified-mcp
+codex mcp add replica-unified -- npx -y replica-unified-mcp
+```
+
+The repository includes `mcp.npm.json` for hosts that accept a portable npm
+MCP manifest.
+
 The Windows x64 release is self-contained for Node, Python, Chromium, the
 Workbench compatibility runtime, and MCP dependencies. It still requires an
 MCP host such as Codex or Claude Code.

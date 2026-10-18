@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "replica-unified": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "replica-unified-mcp"]
+    }
+  }
+}

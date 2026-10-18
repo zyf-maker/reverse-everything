@@ -16,6 +16,15 @@
 
 ## 接入 Codex
 
+轻量 npm 模式（发布到 npm 后）：
+
+```powershell
+npx -y replica-unified-mcp
+codex mcp add replica-unified -- npx -y replica-unified-mcp
+```
+
+这个模式要求 Node.js 20+；npm 会下载 MCP 的 JavaScript 依赖。Python 和 Chromium 只在浏览器、Python Workbench 或对应 provider 能力需要时才需要。
+
 源码模式：
 
 ```powershell
@@ -34,6 +43,8 @@ codex mcp add replica-unified -- C:\path\to\package\runtime\node.exe C:\path\to\
 ```
 
 注册后重启 Codex，在 MCP 列表中确认 `replica-unified`，再调用 `replica_capabilities` 和 `replica_doctor`。插件本身通过 stdio 提供 MCP；Codex 是宿主，skill 需要单独安装或更新到同一版本。
+
+当前 Codex 使用的是本地自包含包；npm 包入口已经加入仓库，但尚未替用户执行 `npm publish`。
 
 ## 统一工具
 

@@ -57,8 +57,8 @@ The repository includes `mcp.npm.json` for hosts that accept a portable npm
 MCP manifest.
 
 The Windows x64 release is self-contained for Node, Python, Chromium, the
-Workbench compatibility runtime, and MCP dependencies. It still requires an
-MCP host such as Codex or Claude Code.
+Replica runtime, and MCP dependencies. It still requires an MCP host such as
+Codex or Claude Code.
 
 ```powershell
 codex mcp add replica-unified -- C:\path\to\package\runtime\node.exe C:\path\to\package\server\index.mjs

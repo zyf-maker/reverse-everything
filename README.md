@@ -8,8 +8,9 @@ builders.
 
 ## MCP with Codex
 
-The package entry point is `replica-unified-mcp` and exposes the
-`replica-unified/v1` stdio protocol.
+The public GitHub release exposes the `replica-unified/v1` stdio protocol and
+can be launched directly with `npx`. No npm account or npm package claim is
+needed for this installation path.
 
 ```powershell
 codex mcp add replica-unified -- npx -y https://github.com/zyf-maker/reverse-everything/releases/download/v0.2.1/replica-unified-mcp-0.2.1.tgz
@@ -24,22 +25,9 @@ npm ci
 codex mcp add replica-unified -- node "$PWD/server/index.mjs"
 ```
 
-The short command `npx -y replica-unified-mcp` will work after the package's
-first npm staged release is created and approved by its npm maintainer. Later
-releases use GitHub Actions Trusted Publishing without a saved npm token.
-
-To claim the package once, a maintainer with npm publish permission runs from
-`replica-mcp-plugin`:
-
-```powershell
-npx -y npm@11.5.1 stage publish --access public --registry=https://registry.npmjs.org
-```
-
-The maintainer then approves the staged `0.2.1` version in npm and adds a
-GitHub Actions trusted publisher for `zyf-maker/reverse-everything`, workflow
-`publish-npm.yml`. This one-time registry ownership and approval cannot be
-performed without the npm maintainer's account and 2FA. After that, publish a
-new package version by running the `Publish npm package` workflow in GitHub.
+The shorter `npx -y replica-unified-mcp` command is an optional future npm
+distribution. The GitHub release tarball above is the supported public path and
+does not depend on npm account registration.
 
 The Windows self-contained release includes its own Node, Python, Chromium,
 and MCP dependencies. Run `replica-mcp-plugin/install-host.ps1 -Agent codex`

@@ -1,0 +1,7 @@
+{
+  "blink": "chromium-155.0.8059.79/third_party/blink/renderer/bindings/core/v8/active_script_wrappable.cc",
+  "eigen": "chromium-155.0.8059.79/third_party/eigen3/src/Eigen/src/AccelerateSupport/AccelerateSupport.h",
+  "ffmpeg/config": "chromium-155.0.8059.79/third_party/ffmpeg/chromium/config/Chrome/win/arm64/config.h",
+  "ffmpeg/source": "chromium-155.0.8059.79/third_party/ffmpeg/libavcodec/012v.c",
+  "hunspell": "chromium-155.0.8059.79/third_party/hunspell/fuzz/bdict_fuzzer.cc"
+}

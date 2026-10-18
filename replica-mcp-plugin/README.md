@@ -47,6 +47,16 @@ development can point at another checkout with `REPLICA_CORE_ROOT`.
 The npx distribution is the lightweight cross-platform path. It requires
 Node.js 20+. The current public package is distributed from the GitHub release
 tarball; Python and Chromium are optional for capabilities that need them.
+The short command `npx -y replica-unified-mcp` becomes available after the
+first npm staged release is approved by the package maintainer; later releases
+can publish through GitHub Actions Trusted Publishing.
+
+To create the first npm version, a maintainer with npm publish permission runs
+`npx -y npm@11.5.1 stage publish --access public --registry=https://registry.npmjs.org`
+from this package directory, then approves the staged version on npm and
+configures the GitHub trusted publisher for `zyf-maker/reverse-everything` and
+`.github/workflows/publish-npm.yml`. The npm account and its 2FA are required
+for this one-time step.
 
 ```powershell
 npx -y https://github.com/zyf-maker/reverse-everything/releases/download/v0.2.1/replica-unified-mcp-0.2.1.tgz

@@ -1,0 +1,17 @@
+{
+  "lite": {
+    "description": "Case management, local inventory, evidence and reports",
+    "requires": ["python>=3.10"],
+    "optional": []
+  },
+  "standard": {
+    "description": "Lite plus browser runtime capture through a local CDP adapter",
+    "requires": ["python>=3.10", "chromium-cdp"],
+    "optional": ["node"]
+  },
+  "full": {
+    "description": "Standard plus isolated service adapters and security verification",
+    "requires": ["python>=3.10", "chromium-cdp", "docker"],
+    "optional": ["node", "embedding-service"]
+  }
+}

@@ -3,3 +3,17 @@ __pycache__/
 .DS_Store
 node_modules/
 
+
+**/node_modules/
+**/dist/
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/work/
+*.pyc
+*.zip
+*.tar.xz
+.env
+.env.*
+verification/*.log
+**/*.egg-info/

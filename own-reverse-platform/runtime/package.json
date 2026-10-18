@@ -1,0 +1,21 @@
+{
+  "name": "own-reverse-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser runtime evidence collector built on the public Chrome DevTools Protocol.",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "rr-runtime": "src/cli.js"
+  },
+  "scripts": {
+    "capture": "node src/cli.js capture",
+    "compare": "node src/cli.js compare",
+    "test": "node test/runtime.test.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

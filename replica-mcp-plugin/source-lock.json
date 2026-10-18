@@ -1,0 +1,19 @@
+{
+  "assets": [
+    {
+      "name": "chromium-155.0.8059.79-lite.tar.xz",
+      "sha256": "fcb5be44f1f5916ac23309c706146819c792c0d0e9c1a8220b7fbc046d79f15e",
+      "url": "https://commondatastorage.googleapis.com/chromium-browser-official/chromium-155.0.8059.79-lite.tar.xz"
+    },
+    {
+      "name": "ungoogled-chromium-windows-a1e3123-source.zip",
+      "sha256": "9038bd7d5179cd7ecd912a5797c4f36a3535f935239474d173ef864a6ffd9e19",
+      "url": "https://codeload.github.com/ungoogled-software/ungoogled-chromium-windows/zip/a1e3123c8d543b5c9a1eecfaf0f06cf242c0db37"
+    },
+    {
+      "name": "ungoogled-chromium-9f145d8-source.zip",
+      "sha256": "b9b1b37621c7be59de87fbff2ff1a09b9f76114275dd565a657aefac2ab71bc9",
+      "url": "https://codeload.github.com/ungoogled-software/ungoogled-chromium/zip/9f145d8815e6e50cc4a2537fcac40966d911e027"
+    }
+  ]
+}

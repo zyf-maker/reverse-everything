@@ -1,0 +1,328 @@
+{
+  "schema": "own-reverse-replay/v1",
+  "name": "2048-comprehensive",
+  "randomSeed": 42,
+  "snapshot": "game2048",
+  "setup": {
+    "bestScore": 10,
+    "gameState": {
+      "grid": {
+        "size": 4,
+        "cells": [
+          [{"position": {"x": 0, "y": 0}, "value": 2}, null, null, null],
+          [{"position": {"x": 1, "y": 0}, "value": 2}, null, null, null],
+          [null, null, null, null],
+          [null, null, null, null]
+        ]
+      },
+      "score": 0,
+      "over": false,
+      "won": false,
+      "keepPlaying": false
+    },
+    "waitMs": 250
+  },
+  "expect": {
+    "board": [2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "score": "0",
+    "best": "10",
+    "message": []
+  },
+  "steps": [
+    {
+      "type": "key",
+      "key": "ArrowLeft",
+      "label": "merge-left-score",
+      "settleMs": 100,
+      "expect": {
+        "board": [4, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "4",
+        "best": "10",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 10,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 2}, {"position": {"x": 0, "y": 1}, "value": 2}, null, null],
+              [null, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 0,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowUp",
+      "label": "merge-up-score",
+      "settleMs": 100,
+      "expect": {
+        "board": [4, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "4",
+        "best": "10",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 10,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 2}, {"position": {"x": 0, "y": 1}, "value": 2}, null, null],
+              [null, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 0,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowDown",
+      "label": "merge-down-score",
+      "settleMs": 100,
+      "expect": {
+        "board": [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
+        "score": "4",
+        "best": "10",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 10,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 2}, null, null, null],
+              [{"position": {"x": 1, "y": 0}, "value": 2}, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 0,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowRight",
+      "label": "merge-right-score",
+      "settleMs": 100,
+      "expect": {
+        "board": [0, 0, 0, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "score": "4",
+        "best": "10",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 10,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 2}, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 0,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowLeft",
+      "label": "no-op-does-not-spawn",
+      "settleMs": 100,
+      "expect": {
+        "board": [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "score": "0",
+        "best": "10",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 10,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 1024}, null, null, null],
+              [{"position": {"x": 1, "y": 0}, "value": 1024}, null, null, null],
+              [null, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 0,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowLeft",
+      "label": "win-pauses-game",
+      "settleMs": 100,
+      "expect": {
+        "board": [2048, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "2048",
+        "best": "2048",
+        "message": ["game-won"]
+      }
+    },
+    {
+      "type": "click",
+      "selector": ".keep-playing-button",
+      "label": "continue-after-win",
+      "settleMs": 100,
+      "expect": {
+        "board": [2048, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "2048",
+        "best": "2048",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 64,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [{"position": {"x": 0, "y": 0}, "value": 2}, {"position": {"x": 0, "y": 1}, "value": 8}, {"position": {"x": 0, "y": 2}, "value": 16}, {"position": {"x": 0, "y": 3}, "value": 32}],
+              [{"position": {"x": 1, "y": 0}, "value": 2}, {"position": {"x": 1, "y": 1}, "value": 16}, {"position": {"x": 1, "y": 2}, "value": 32}, {"position": {"x": 1, "y": 3}, "value": 64}],
+              [{"position": {"x": 2, "y": 0}, "value": 8}, {"position": {"x": 2, "y": 1}, "value": 32}, {"position": {"x": 2, "y": 2}, "value": 64}, {"position": {"x": 2, "y": 3}, "value": 128}],
+              [{"position": {"x": 3, "y": 0}, "value": 16}, {"position": {"x": 3, "y": 1}, "value": 64}, {"position": {"x": 3, "y": 2}, "value": 128}, {"position": {"x": 3, "y": 3}, "value": 256}]
+            ]
+          },
+          "score": 60,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowRight",
+      "label": "loss-clears-state",
+      "settleMs": 100,
+      "expect": {
+        "board": [2, 4, 8, 16, 8, 16, 32, 64, 16, 32, 64, 128, 32, 64, 128, 256],
+        "score": "64",
+        "best": "64",
+        "message": ["game-over"]
+      }
+    },
+    {
+      "type": "click",
+      "selector": ".retry-button",
+      "label": "retry-after-loss",
+      "settleMs": 100,
+      "expect": {
+        "score": "0",
+        "best": "64",
+        "message": []
+      }
+    },
+    {
+      "type": "reset",
+      "seed": 42,
+      "setup": {
+        "bestScore": 24,
+        "gameState": {
+          "grid": {
+            "size": 4,
+            "cells": [
+              [null, null, null, null],
+              [null, null, null, null],
+              [{"position": {"x": 2, "y": 0}, "value": 8}, null, null, null],
+              [null, null, null, null]
+            ]
+          },
+          "score": 16,
+          "over": false,
+          "won": false,
+          "keepPlaying": false
+        }
+      }
+    },
+    {
+      "type": "key",
+      "key": "ArrowLeft",
+      "label": "persist-before-reload",
+      "settleMs": 100,
+      "expect": {
+        "board": [8, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "16",
+        "best": "24",
+        "message": []
+      }
+    },
+    {
+      "type": "reload",
+      "label": "reload-restores-saved-game",
+      "settleMs": 250,
+      "expect": {
+        "board": [8, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        "score": "16",
+        "best": "24",
+        "message": []
+      }
+    },
+    {
+      "type": "click",
+      "selector": ".restart-button",
+      "label": "restart-clears-score-keeps-best",
+      "settleMs": 100,
+      "expect": {
+        "score": "0",
+        "best": "24",
+        "message": []
+      }
+    }
+  ]
+}

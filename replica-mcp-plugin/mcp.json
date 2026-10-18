@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "replica-workbench": {
+      "type": "stdio",
+      "command": "${PLUGIN_ROOT}/runtime/node.exe",
+      "args": ["${PLUGIN_ROOT}/server/index.mjs"],
+      "cwd": "${PLUGIN_ROOT}"
+    }
+  }
+}

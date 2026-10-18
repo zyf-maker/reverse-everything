@@ -1,0 +1,5 @@
+{
+  "name": "replica-workbench",
+  "version": "0.1.1",
+  "description": "Evidence-driven, authorization-scoped website reconstruction tools over MCP."
+}

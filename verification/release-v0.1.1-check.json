@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "archive": "replica-workbench-mcp-win-x64-v0.1.1.zip",
+  "archiveSha256": "1d142812ce0243b3ac3e707ca14e6400d4f981d111e42d7b46265764e9e98b40",
+  "browserProducts": 770,
+  "sourceAssets": {
+    "chromium-155.0.8059.79-lite.tar.xz": "fcb5be44f1f5916ac23309c706146819c792c0d0e9c1a8220b7fbc046d79f15e",
+    "ungoogled-chromium-windows-a1e3123-source.zip": "9038bd7d5179cd7ecd912a5797c4f36a3535f935239474d173ef864a6ffd9e19",
+    "ungoogled-chromium-9f145d8-source.zip": "b9b1b37621c7be59de87fbff2ff1a09b9f76114275dd565a657aefac2ab71bc9"
+  }
+}

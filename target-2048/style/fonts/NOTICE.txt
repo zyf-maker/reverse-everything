@@ -1,0 +1,5 @@
+Clear Sans font family
+Copyright Intel Corporation.
+Designed by Monotype for Intel.
+Upstream: https://github.com/intel/clear-sans
+Distributed under the Apache License, Version 2.0; see LICENSE.txt.

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "replica-workbench": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/server/index.mjs"],
+      "cwd": "${PLUGIN_ROOT}",
+      "env": { "REPLICA_WORKBENCH_ROOT": "${PLUGIN_ROOT}/../replica-workbench" }
+    }
+  }
+}
